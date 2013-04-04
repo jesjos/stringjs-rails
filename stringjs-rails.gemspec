@@ -1,11 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'stringjs-rails/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "stringjs-rails"
-  spec.version       = Stringjs::Rails::VERSION
+  spec.version       = "1.3.0"
   spec.authors       = ["Jesper Josefsson"]
   spec.email         = ["jesper.josefsson@gmail.com"]
   spec.description   = %q{Wraps String.js and makes it available using the Rails asset pipeline}
