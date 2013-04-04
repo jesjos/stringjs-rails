@@ -28,6 +28,9 @@ Or use the minified version:
 
 For usage of the library see the [String.js homepage][1].
 
+## Versioning
+Major, minor and patch numbers will match those of String.js. Should bugs be fixed in the gem itself, a fourth version number will be added.
+
 ## Contributing
 
 1. Fork it
