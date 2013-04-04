@@ -1,6 +1,6 @@
 # Stringjs::Rails
 
-TODO: Write a gem description
+This is a no-frills asset pipeline wrapper for the [String.js Javascript library][1].
 
 ## Installation
 
@@ -18,7 +18,15 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Add this line to your manifest:
+
+    //= require 'string'
+
+Or use the minified version:
+  
+    //= require 'string.min'
+
+For usage of the library see the [String.js homepage][1].
 
 ## Contributing
 
@@ -27,3 +35,5 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+[1]: http://stringjs.com
