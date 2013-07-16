@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '1.4.0';
+  var VERSION = '1.5.0';
 
   var ENTITIES = {};
 
@@ -200,6 +200,10 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
       } else {
         return this.right(-N);
       }
+    },
+    
+    lines: function() { //convert windows newlines to unix newlines then convert to an Array of lines
+      return this.replaceAll('\r\n', '\n').s.split('\n');
     },
 
     pad: function(len, ch) { //https://github.com/component/pad
