@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '1.5.0';
+  var VERSION = '1.5.1';
 
   var ENTITIES = {};
 
@@ -339,7 +339,7 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
 
       matches.forEach(function(match) {
         var key = match.substring(opening.length, match.length - closing.length);//chop {{ and }}
-        if (values[key])
+        if (typeof values[key] != 'undefined')
           s = s.replace(match, values[key]);
       });
       return new S(s);
