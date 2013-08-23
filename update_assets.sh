@@ -1,0 +1,2 @@
+curl https://raw.github.com/jprichardson/string.js/master/lib/string.js > ./vendor/assets/javascripts/string.js
+curl https://raw.github.com/jprichardson/string.js/master/lib/string.min.js > ./vendor/assets/javascripts/string.min.js
