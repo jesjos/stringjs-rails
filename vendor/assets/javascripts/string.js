@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '1.6.0';
+  var VERSION = '1.6.1';
 
   var ENTITIES = {};
 
@@ -360,7 +360,10 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
       var s = this.s
       var opening = opening || Export.TMPL_OPEN
       var closing = closing || Export.TMPL_CLOSE
-      var r = new RegExp(opening + '(.+?)' + closing, 'g')
+
+      var open = opening.replace(/[-[\]()*\s]/g, "\\$&").replace(/\$/g, '\\$')
+      var close = closing.replace(/[-[\]()*\s]/g, "\\$&").replace(/\$/g, '\\$')
+      var r = new RegExp(open + '(.+?)' + close, 'g')
         //, r = /\{\{(.+?)\}\}/g
       var matches = s.match(r) || [];
 
