@@ -1,11 +1,11 @@
 /*
-string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
+string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 */
 
 !(function() {
   "use strict";
 
-  var VERSION = '1.8.0';
+  var VERSION = '1.9.0';
 
   var ENTITIES = {};
 
@@ -386,7 +386,7 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
     toBoolean: function() {
       if (typeof this.orig === 'string') {
         var s = this.s.toLowerCase();
-        return s === 'true' || s === 'yes' || s === 'on';
+        return s === 'true' || s === 'yes' || s === 'on' || s === '1';
       } else
         return this.orig === true || this.orig === 1;
     },
@@ -546,8 +546,15 @@ string.js - Copyright (C) 2012-2013, JP Richardson <jprichardson@gmail.com>
 
     valueOf: function() {
       return this.s.valueOf();
-    }
+    },
 
+    //#Added a New Function called wrapHTML.
+    wrapHTML: function (tagName, tagAttrs) {
+      var s = this.s, el = (tagName == null) ? 'span' : tagName, elAttr = '', wrapped = '';
+      if(typeof tagAttrs == 'object') for(var prop in tagAttrs) elAttr += ' ' + prop + '="' + tagAttrs[prop] + '"';
+      s = wrapped.concat('<', el, elAttr, '>', this, '</', el, '>');
+      return new this.constructor(s);
+    }
   }
 
   var methodsAdded = [];
