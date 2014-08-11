@@ -196,11 +196,11 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
     },
 
     isAlpha: function() {
-      return !/[^a-z\xC0-\xFF]/.test(this.s.toLowerCase());
+      return !/[^a-z\xDF-\xFF]/.test(this.s.toLowerCase());
     },
 
     isAlphaNumeric: function() {
-      return !/[^0-9a-z\xC0-\xFF]/.test(this.s.toLowerCase());
+      return !/[^0-9a-z\xDF-\xFF]/.test(this.s.toLowerCase());
     },
 
     isEmpty: function() {
@@ -259,7 +259,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       if (typeof qualifier == 'undefined')
         qualifier = '"';
 
-      var i = 0, fieldBuffer = [], fields = [], len = this.s.length, inField = false, self = this;
+      var i = 0, fieldBuffer = [], fields = [], len = this.s.length, inField = false, inUnqualifiedString = false, self = this;
       var ca = function(i){return self.s.charAt(i)};
       if (typeof lineDelimiter !== 'undefined') var rows = [];
 
@@ -270,17 +270,21 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
         var current = ca(i);
         switch (current) {
           case escape:
-          //fix for issues #32 and #35
-          if (inField && ((escape !== qualifier) || ca(i+1) === qualifier)) {
+            //fix for issues #32 and #35
+            if (inField && ((escape !== qualifier) || ca(i+1) === qualifier)) {
               i += 1;
               fieldBuffer.push(ca(i));
               break;
-          }
-          if (escape !== qualifier) break;
+            }
+            if (escape !== qualifier) break;
           case qualifier:
             inField = !inField;
             break;
           case delimiter:
+            if(inUnqualifiedString) {
+              inField=false;
+              inUnqualifiedString=false;
+            }
             if (inField && qualifier)
               fieldBuffer.push(current);
             else {
@@ -289,20 +293,37 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
             }
             break;
           case lineDelimiter:
-            if (inField) {
-                fieldBuffer.push(current);
-            } else {
-                if (rows) {
-                    fields.push(fieldBuffer.join(''))
-                    rows.push(fields);
-                    fields = [];
-                    fieldBuffer.length = 0;
-                }
+            if(inUnqualifiedString) {
+              inField=false;
+              inUnqualifiedString=false;
+              fields.push(fieldBuffer.join(''))
+              rows.push(fields);
+              fields = [];
+              fieldBuffer.length = 0;
             }
+            else if (inField) {
+              fieldBuffer.push(current);
+            } else {
+              if (rows) {
+                fields.push(fieldBuffer.join(''))
+                rows.push(fields);
+                fields = [];
+                fieldBuffer.length = 0;
+              }
+            }
+            break;
+          case ' ':
+            if (inField)
+              fieldBuffer.push(current);
             break;
           default:
             if (inField)
               fieldBuffer.push(current);
+            else if(current!==qualifier) {
+              fieldBuffer.push(current);
+              inField=true;
+              inUnqualifiedString=true;
+            }
             break;
         }
         i += 1;
@@ -551,7 +572,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
     //#Added a New Function called wrapHTML.
     wrapHTML: function (tagName, tagAttrs) {
       var s = this.s, el = (tagName == null) ? 'span' : tagName, elAttr = '', wrapped = '';
-      if(typeof tagAttrs == 'object') for(var prop in tagAttrs) elAttr += ' ' + prop + '="' + tagAttrs[prop] + '"';
+      if(typeof tagAttrs == 'object') for(var prop in tagAttrs) elAttr += ' ' + prop + '="' +(new this.constructor(tagAttrs[prop])).escapeHTML() + '"';
       s = wrapped.concat('<', el, elAttr, '>', this, '</', el, '>');
       return new this.constructor(s);
     }
