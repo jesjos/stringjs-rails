@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "stringjs-rails"
-  spec.version       = "2.1.0"
+  spec.version       = "2.2.0"
   spec.authors       = ["Jesper Josefsson"]
   spec.email         = ["jesper.josefsson@gmail.com"]
   spec.description   = %q{Wraps String.js and makes it available using the Rails asset pipeline}

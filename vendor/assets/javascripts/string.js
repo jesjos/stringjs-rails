@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '2.1.0';
+  var VERSION = '2.2.0';
 
   var ENTITIES = {};
 
@@ -169,9 +169,13 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       return new this.constructor(s);
     },
 
-    endsWith: function(suffix) {
-      var l  = this.s.length - suffix.length;
-      return l >= 0 && this.s.indexOf(suffix, l) === l;
+    endsWith: function() {
+      var suffixes = Array.prototype.slice.call(arguments, 0);
+      for (var i = 0; i < suffixes.length; ++i) {
+        var l  = this.s.length - suffixes[i].length;
+        if (l >= 0 && this.s.indexOf(suffixes[i], l) === l) return true;
+      }
+      return false;
     },
 
     escapeHTML: function() { //from underscore.string
@@ -380,8 +384,12 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       return new this.constructor(sl);
     },
 
-    startsWith: function(prefix) {
-      return this.s.lastIndexOf(prefix, 0) === 0;
+    startsWith: function() {
+      var prefixes = Array.prototype.slice.call(arguments, 0);
+      for (var i = 0; i < prefixes.length; ++i) {
+        if (this.s.lastIndexOf(prefixes[i], 0) === 0) return true;
+      }
+      return false;
     },
 
     stripPunctuation: function() {
@@ -409,9 +417,9 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       var matches = s.match(r) || [];
 
       matches.forEach(function(match) {
-        var key = match.substring(opening.length, match.length - closing.length);//chop {{ and }}
-        if (typeof values[key] != 'undefined')
-          s = s.replace(match, values[key]);
+        var key = match.substring(opening.length, match.length - closing.length).trim();//chop {{ and }}
+        var value = typeof values[key] == 'undefined' ? '' : values[key];
+        s = s.replace(match, value);
       });
       return new this.constructor(s);
     },
