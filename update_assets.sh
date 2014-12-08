@@ -1,2 +1,2 @@
-curl https://cdn.rawgit.com/jprichardson/string.js/master/lib/string.js > ./vendor/assets/javascripts/string.js
-curl https://cdn.rawgit.com/jprichardson/string.js/master/lib/string.min.js > ./vendor/assets/javascripts/string.min.js
+curl https://raw.githubusercontent.com/jprichardson/string.js/master/lib/string.js > ./vendor/assets/javascripts/string.js
+curl https://raw.githubusercontent.com/jprichardson/string.js/master/lib/string.min.js > ./vendor/assets/javascripts/string.min.js
