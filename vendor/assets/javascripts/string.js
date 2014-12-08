@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '2.2.0';
+  var VERSION = '3.0.0';
 
   var ENTITIES = {};
 
@@ -567,9 +567,6 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
     //#modified from https://github.com/epeli/underscore.string
     underscore: function() {
       var s = this.trim().s.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
-      if ((new S(this.s.charAt(0))).isUpper()) {
-        s = '_' + s;
-      }
       return new this.constructor(s);
     },
 
