@@ -5,7 +5,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 !(function() {
   "use strict";
 
-  var VERSION = '3.0.0';
+  var VERSION = '3.3.1';
 
   var ENTITIES = {};
 
@@ -66,11 +66,11 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       var s = this.s;
       var startPos = s.indexOf(left);
       var endPos = s.indexOf(right, startPos + left.length);
-      if (endPos == -1 && right != null) 
+      if (endPos == -1 && right != null)
         return new this.constructor('')
       else if (endPos == -1 && right == null)
         return new this.constructor(s.substring(startPos + left.length))
-      else 
+      else
         return new this.constructor(s.slice(startPos + left.length, endPos));
     },
 
@@ -121,15 +121,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
     },
 
     count: function(ss) {
-      var count = 0
-        , pos = this.s.indexOf(ss)
-
-      while (pos >= 0) {
-        count += 1
-        pos = this.s.indexOf(ss, pos + 1)
-      }
-
-      return count
+      return require('./_count')(this.s, ss)
     },
 
     //#modified from https://github.com/epeli/underscore.string
@@ -154,7 +146,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       .replace(/&([^;\W]+;?)/g, function (m, e) {
         var ee = e.replace(/;$/, '');
         var target = ENTITIES[e] || (e.match(/;$/) && ENTITIES[ee]);
-            
+
         if (typeof target === 'number') {
           return String.fromCharCode(target);
         }
@@ -239,7 +231,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
         return this.right(-N);
       }
     },
-    
+
     lines: function() { //convert windows newlines to unix newlines then convert to an Array of lines
       return this.replaceAll('\r\n', '\n').s.split('\n');
     },
@@ -355,12 +347,52 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       return new this.constructor(s);
     },
 
+    splitLeft: function(sep, maxSplit, limit) {
+      return require('./_splitLeft')(this.s, sep, maxSplit, limit)
+    },
+
+    splitRight: function(sep, maxSplit, limit) {
+      return require('./_splitRight')(this.s, sep, maxSplit, limit)
+    },
+
     strip: function() {
       var ss = this.s;
       for(var i= 0, n=arguments.length; i<n; i++) {
         ss = ss.split(arguments[i]).join('');
       }
       return new this.constructor(ss);
+    },
+
+    stripLeft: function (chars) {
+      var regex;
+      var pattern;
+      var ss = ensureString(this.s);
+
+      if (chars === undefined) {
+        pattern = /^\s+/g;
+      }
+      else {
+        regex = escapeRegExp(chars);
+        pattern = new RegExp("^[" + regex + "]+", "g");
+      }
+
+      return new this.constructor(ss.replace(pattern, ""));
+    },
+
+    stripRight: function (chars) {
+      var regex;
+      var pattern;
+      var ss = ensureString(this.s);
+
+      if (chars === undefined) {
+        pattern = /\s+$/g;
+      }
+      else {
+        regex = escapeRegExp(chars);
+        pattern = new RegExp("[" + regex + "]+$", "g");
+      }
+
+      return new this.constructor(ss.replace(pattern, ""));
     },
 
     right: function(N) {
@@ -428,6 +460,18 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
       return new this.constructor(new Array(n + 1).join(this.s));
     },
 
+    titleCase: function() {
+      var s = this.s;
+      if (s) {
+        s = s.replace(/(^[a-z]| [a-z]|-[a-z]|_[a-z])/g,
+          function($1){
+            return $1.toUpperCase();
+          }
+        );
+      }
+      return new this.constructor(s);
+    },
+
     toBoolean: function() {
       if (typeof this.orig === 'string') {
         var s = this.s.toLowerCase();
@@ -451,9 +495,9 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 
     trim: function() {
       var s;
-      if (typeof __nsp.trim === 'undefined') 
+      if (typeof __nsp.trim === 'undefined')
         s = this.s.replace(/(^\s*|\s*$)/g, '')
-      else 
+      else
         s = this.s.trim()
       return new this.constructor(s);
     },
@@ -537,19 +581,19 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
         var shouldQualify = hasVal(qualifier)
         if (typeof dataArray[i] == 'number')
           shouldQualify &= encloseNumbers;
-        
+
         if (shouldQualify)
           buildString.push(qualifier);
-        
+
         if (dataArray[i] !== null && dataArray[i] !== undefined) {
           var d = new S(dataArray[i]).replaceAll(qualifier, rep).s;
           buildString.push(d);
-        } else 
+        } else
           buildString.push('')
 
         if (shouldQualify)
           buildString.push(qualifier);
-        
+
         if (delim)
           buildString.push(delim);
       }
@@ -566,7 +610,7 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 
     //#modified from https://github.com/epeli/underscore.string
     underscore: function() {
-      var s = this.trim().s.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
+      var s = this.trim().s.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/([A-Z\d]+)([A-Z][a-z])/g,'$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
       return new this.constructor(s);
     },
 
@@ -676,9 +720,10 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
 
     for (var i = 0; i < names.length; ++i) {
       var name = names[i];
+      if (name === 'to' || name === 'toEnd') continue;       // get rid of the shelljs prototype messup
       var func = __nsp[name];
       try {
-        var type = typeof func.apply('teststring', []);
+        var type = typeof func.apply('teststring');
         retObj[name] = type;
       } catch (e) {}
     }
@@ -764,6 +809,35 @@ string.js - Copyright (C) 2012-2014, JP Richardson <jprichardson@gmail.com>
     apos: "'",
     amp: '&'
   };
+
+  function escapeRegExp (s) {
+    // most part from https://github.com/skulpt/skulpt/blob/ecaf75e69c2e539eff124b2ab45df0b01eaf2295/src/str.js#L242
+    var c;
+    var i;
+    var ret = [];
+    var re = /^[A-Za-z0-9]+$/;
+    s = ensureString(s);
+    for (i = 0; i < s.length; ++i) {
+      c = s.charAt(i);
+
+      if (re.test(c)) {
+        ret.push(c);
+      }
+      else {
+        if (c === "\\000") {
+          ret.push("\\000");
+        }
+        else {
+          ret.push("\\" + c);
+        }
+      }
+    }
+    return ret.join("");
+  }
+
+  function ensureString(string) {
+    return string == null ? '' : '' + string;
+  }
 
   //from underscore.string
   var reversedEscapeChars = {};
